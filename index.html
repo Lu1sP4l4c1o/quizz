@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Harry Potter</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to top, #8a0000, #2c0000);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .professor {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column; /* Forçar as informações a ficarem em coluna */
+  align-items: center; /* Centraliza o conteúdo horizontalmente */
+}
+
+.foto-professor {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-bottom: 5px; /* Adiciona espaço entre a imagem e o texto */
+  border-radius: 15%;
+  border-color: #2c0000;
+
+}
+
+#professores {
+  margin-bottom: 20px; /* Espaço entre a lista de professores e o botão de voltar */
+}
+
+        .logo-container{
+
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .casa-imagem {
+            width: 100px;
+            height: auto;
+            margin: 20px auto;
+            display: none;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .question:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .question p {
+            font-weight: bold;
+            font-size: 1.3em;
+            margin: 0 0 10px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+            font-size: 1.1em;
+            position: relative;
+            padding: 10px;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + label {
+            background-color: #ffcc00;
+            color: #333;
+        }
+
+        input[type="text"] {
+
+            
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #eff302, #e4a700);
+
+
+        }
+
+   marquee{
+
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+    font-size: small;
+   }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #ffcc00;
+            color: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+
+        .resultado {
+            margin-top: 30px;
+            font-size: 1.5em;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #ffcc00;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+    </style>
+    <script>
+        function calcularResultado() {
+            const form = document.getElementById('quiz-form');
+            const nome = document.getElementById('nome-bruxo').value;
+            if (!nome) {
+                alert("Por favor, insira seu nome!");
+                return;
+            }
+
+            const respostas = new Array(4).fill(0);
+
+            for (let i = 0; i < 10; i++) {
+                if (!form[`q${i + 1}`].value) {
+                    alert("Por favor, responda todas as perguntas!");
+                    return;
+                }
+            }
+
+            for (let i = 0; i < 10; i++) {
+                const selectedOption = form[`q${i + 1}`].value;
+                respostas[selectedOption]++;
+            }
+
+            const casas = ["Grifinória", "Corvinal", "Lufa-Lufa", "Sonserina"];
+            const imagens = [
+                "https://static.wikia.nocookie.net/harrypotter/images/b/b1/Gryffindor_ClearBG.png/revision/latest?cb=20201020015812&path-prefix=pt-br",
+                "https://static.wikia.nocookie.net/harrypotter/images/0/07/Ravenclaw_%28S%C3%ADmbolo_Corvinal%29.png/revision/latest?cb=20170324224938&path-prefix=pt-br",
+                "https://static.wikia.nocookie.net/harrypotter/images/0/06/Hufflepuff_ClearBG.png/revision/latest?cb=20200612012838&path-prefix=pt-br",
+                "https://static.wikia.nocookie.net/harrypotter/images/0/00/Slytherin_ClearBG.png/revision/latest?cb=20200605032916&path-prefix=pt-br"
+            ];
+            const mensagens = [
+                "Você é destemido e corajoso, um verdadeiro líder!",
+                "Sua sabedoria e amor pelo conhecimento fazem de você um verdadeiro Corvinal!",
+                "Você é leal e amigável, sempre pronto para ajudar!",
+                "Sua ambição e determinação o tornam um Sonserino nato!"
+            ];
+            let maxIndex = 0;
+
+            for (let i = 1; i < respostas.length; i++) {
+                if (respostas[i] > respostas[maxIndex]) {
+                    maxIndex = i;
+                }
+            }
+
+            const resultado = `<strong>${nome}</strong>, você pertence à casa: <strong>${casas[maxIndex]}</strong>! ${mensagens[maxIndex]}`;
+            const resultadoDiv = document.getElementById('resultado');
+            const casaImagem = document.getElementById('casa-imagem');
+
+            resultadoDiv.innerHTML = resultado;
+            casaImagem.src = imagens[maxIndex];
+            casaImagem.alt = `Imagem da Casa ${casas[maxIndex]}`;
+
+            resultadoDiv.style.display = 'block';
+            casaImagem.style.display = 'block';
+        }
+
+        function reiniciarQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.reset();
+            const resultadoDiv = document.getElementById('resultado');
+            const casaImagem = document.getElementById('casa-imagem');
+
+            resultadoDiv.style.display = 'none';
+            casaImagem.style.display = 'none';
+        }
+
+        // Função para mostrar a tela com as casas dos professores e esconder o quiz
+function mostrarCasas() {
+    document.getElementById('quiz-container').style.display = 'none';
+    document.getElementById('casas-professores-container').style.display = 'block';
+}
+
+// Função para voltar ao quiz e esconder a tela de casas dos professores
+function voltarQuiz() {
+    document.getElementById('quiz-container').style.display = 'block';
+    document.getElementById('casas-professores-container').style.display = 'none';
+}
+
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        
+        <marquee>Uaau! Veja só! Quanta Coragem! Professor Marcos é Grifinória!  ⚡   Uaau! Veja Só! Você Ecoa Sabedoria! Professora Ana Érika é Corvinal!   ⚡   Uaau! Veja Só! Você é Pura Lealdade! Professora Mariana é Lufa-Lufa!   ⚡   Uaau! Veja Só! Sua Sagacidade é Imensa! Professora Lavinia é Corvinal!   </marquee>
+        <p>
+        <div class="logo-container">
+            <img src="logo.png" width="300">
+        </div>
+        </p>
+        <form id="quiz-form">
+            <div class="question">
+                <label for="nome-bruxo">Digite seu nome: <input type="text" id="nome-bruxo" name="nome-bruxo" required></label>
+                
+            </div>
+            <!-- Perguntas do quiz -->
+            <div class="question">
+                <p>1. Você vê um colega colando na prova. O que você faz?</p>
+                <input type="radio" name="q1" value="0" id="q1-0" required>
+                <label for="q1-0">Ignora e continua fazendo sua prova.</label>
+                <input type="radio" name="q1" value="1" id="q1-1">
+                <label for="q1-1">Fala para o professor imediatamente.</label>
+                <input type="radio" name="q1" value="2" id="q1-2">
+                <label for="q1-2">Fica desconfortável, mas não fala nada.</label>
+                <input type="radio" name="q1" value="3" id="q1-3">
+                <label for="q1-3">Tenta avisar o colega que o professor está de olho.</label>
+            </div>
+            
+            <div class="question">
+                <p>2. Se você pudesse passar um final de semana em qualquer lugar do mundo, onde seria?</p>
+                <input type="radio" name="q2" value="0" id="q2-0">
+                <label for="q2-0">Em uma cidade histórica, explorando a cultura local.</label>
+                <input type="radio" name="q2" value="1" id="q2-1">
+                <label for="q2-1">Em uma aventura radical, como escalar montanhas ou surfar grandes ondas.</label>
+                <input type="radio" name="q2" value="2" id="q2-2">
+                <label for="q2-2">Em um retiro tranquilo, cercado pela natureza.</label>
+                <input type="radio" name="q2" value="3" id="q2-3">
+                <label for="q2-3">Em casa, relaxando e assistindo seus filmes e séries favoritos.</label>
+            </div>
+            
+            <div class="question">
+                <p>3. Quando você tem um problema complicado, como você lida com ele?</p>
+                <input type="radio" name="q3" value="0" id="q3-0">
+                <label for="q3-0">Eu penso muito até encontrar a melhor solução.</label>
+                <input type="radio" name="q3" value="1" id="q3-1">
+                <label for="q3-1">Eu encaro o problema de frente e resolvo o mais rápido possível.</label>
+                <input type="radio" name="q3" value="2" id="q3-2">
+                <label for="q3-2">Peço conselhos para amigos e familiares.</label>
+                <input type="radio" name="q3" value="3" id="q3-3">
+                <label for="q3-3">Eu tento deixar as coisas fluírem e ver como se resolvem naturalmente.</label>
+            </div>
+            
+            <div class="question">
+                <p>4. Você tem que fazer uma escolha difícil que afeta outras pessoas. O que você faz?</p>
+                <input type="radio" name="q4" value="0" id="q4-0">
+                <label for="q4-0">Penso no que é mais justo para todos.</label>
+                <input type="radio" name="q4" value="1" id="q4-1">
+                <label for="q4-1">Faço o que precisa ser feito, mesmo que seja impopular.</label>
+                <input type="radio" name="q4" value="2" id="q4-2">
+                <label for="q4-2">Considero os sentimentos de todos antes de tomar uma decisão.</label>
+                <input type="radio" name="q4" value="3" id="q4-3">
+                <label for="q4-3">Analiso todas as opções com calma antes de escolher.</label>
+            </div>
+            
+            <div class="question">
+                <p>5. Se você pudesse escolher um superpoder, qual seria?</p>
+                <input type="radio" name="q5" value="0" id="q5-0">
+                <label for="q5-0">A habilidade de ler mentes.</label>
+                <input type="radio" name="q5" value="1" id="q5-1">
+                <label for="q5-1">Super força para enfrentar qualquer desafio.</label>
+                <input type="radio" name="q5" value="2" id="q5-2">
+                <label for="q5-2">A habilidade de curar qualquer pessoa.</label>
+                <input type="radio" name="q5" value="3" id="q5-3">
+                <label for="q5-3">A habilidade de controlar o tempo.</label>
+            </div>
+            
+            <div class="question">
+                <p>6. Você encontra dinheiro no corredor da escola. O que você faz?</p>
+                <input type="radio" name="q6" value="0" id="q6-0">
+                <label for="q6-0">Entrega na secretaria da escola.</label>
+                <input type="radio" name="q6" value="1" id="q6-1">
+                <label for="q6-1">Guarda o dinheiro para si.</label>
+                <input type="radio" name="q6" value="2" id="q6-2">
+                <label for="q6-2">Pergunta para quem está perto se alguém perdeu.</label>
+                <input type="radio" name="q6" value="3" id="q6-3">
+                <label for="q6-3">Deixa o dinheiro lá, alguém pode voltar para pegar.</label>
+            </div>
+            
+            <div class="question">
+                <p>7. Quando você está em um grupo de amigos, qual papel você costuma assumir?</p>
+                <input type="radio" name="q7" value="0" id="q7-0">
+                <label for="q7-0">Sou quem organiza e lidera o grupo.</label>
+                <input type="radio" name="q7" value="1" id="q7-1">
+                <label for="q7-1">Sou quem gosta de aventuras e traz novas ideias.</label>
+                <input type="radio" name="q7" value="2" id="q7-2">
+                <label for="q7-2">Sou o mediador, sempre preocupado em manter a paz.</label>
+                <input type="radio" name="q7" value="3" id="q7-3">
+                <label for="q7-3">Sou mais observador, oferecendo apoio quando necessário.</label>
+            </div>
+            
+            <div class="question">
+                <p>8. Qual dessas qualidades você valoriza mais em um amigo?</p>
+                <input type="radio" name="q8" value="0" id="q8-0">
+                <label for="q8-0">Lealdade.</label>
+                <input type="radio" name="q8" value="1" id="q8-1">
+                <label for="q8-1">Coragem.</label>
+                <input type="radio" name="q8" value="2" id="q8-2">
+                <label for="q8-2">Bondade.</label>
+                <input type="radio" name="q8" value="3" id="q8-3">
+                <label for="q8-3">Inteligência.</label>
+            </div>
+            
+            <div class="question">
+                <p>9. O que você prefere fazer em seu tempo livre?</p>
+                <input type="radio" name="q9" value="0" id="q9-0">
+                <label for="q9-0">Praticar algum esporte ou atividade física.</label>
+                <input type="radio" name="q9" value="1" id="q9-1">
+                <label for="q9-1">Ler um livro ou estudar algo novo.</label>
+                <input type="radio" name="q9" value="2" id="q9-2">
+                <label for="q9-2">Sair com amigos e socializar.</label>
+                <input type="radio" name="q9" value="3" id="q9-3">
+                <label for="q9-3">Assistir filmes ou séries tranquilamente em casa.</label>
+            </div>
+            
+            <div class="question">
+                <p>10. Como você reage quando enfrenta um grande desafio?</p>
+                <input type="radio" name="q10" value="0" id="q10-0">
+                <label for="q10-0">Encaro de frente e dou o meu melhor.</label>
+                <input type="radio" name="q10" value="1" id="q10-1">
+                <label for="q10-1">Tento encontrar a solução mais inteligente possível.</label>
+                <input type="radio" name="q10" value="2" id="q10-2">
+                <label for="q10-2">Peço ajuda para meus amigos ou familiares.</label>
+                <input type="radio" name="q10" value="3" id="q10-3">
+                <label for="q10-3">Fico calmo e deixo as coisas se resolverem naturalmente.</label>
+            </div>            
+            
+            <!-- Continue com o restante das perguntas -->
+            <button type="button" onclick="calcularResultado()">Ver Resultado</button>
+        </form>
+        <div id="resultado" class="resultado"></div>
+        <img id="casa-imagem" class="casa-imagem" src="" alt="">
+        <button type="button" onclick="reiniciarQuiz()">Reiniciar Quiz</button>
+        <!-- Botão para ver as casas dos professores -->
+<button id="btn-ver-casas" onclick="mostrarCasas()">Ver Casas dos Professores</button>
+
+<!-- Div do quiz (escondida quando visualizando as casas dos professores) -->
+<div id="quiz-container">
+  <!-- Aqui o seu conteúdo do quiz original -->
+</div>
+
+<!-- Div para mostrar as casas dos professores (inicialmente escondida) -->
+<div id="casas-professores-container" style="display: none;">
+  <h2>Casas dos Professores</h2>
+  <div id="professores">
+    <!-- Exemplo de professor -->
+    <div class="professor">
+      <img src="professores/marcos.jpeg" alt="Foto do Professor" class="foto-professor" />
+      <h3>Nome: Marcos</h3>
+      <p>Função: Mestre na Arte do Inglês</p>
+      <p>Casa: Grifinória</p>
+      <img src="https://static.wikia.nocookie.net/harrypotter/images/b/b1/Gryffindor_ClearBG.png/revision/latest?cb=20201020015812&path-prefix=pt-br" width="100">
+
+    </div>
+
+    <div class="professor">
+      <img src="professores/lavinia.jpeg" alt="Foto do Professor" class="foto-professor" />
+      <h3>Nome: Lavinia</h3>
+      <p>Função: Mestre na Arte do Inglês</p>
+      <p>Casa: Cornival</p>
+      <img src="https://static.wikia.nocookie.net/harrypotter/images/0/07/Ravenclaw_%28S%C3%ADmbolo_Corvinal%29.png/revision/latest?cb=20170324224938&path-prefix=pt-br" width="100">
+      
+    </div>
+    <div class="professor">
+    <img src="professores/vini.jpeg" alt="Foto do Professor" class="foto-professor" />
+    <h3>Nome: Vinicius</h3>
+    <p>Função: Mestre na Arte da Tecnologia</p>
+    <p>Casa: Grifinória</p>
+    <img src="https://static.wikia.nocookie.net/harrypotter/images/b/b1/Gryffindor_ClearBG.png/revision/latest?cb=20201020015812&path-prefix=pt-br" width="100">
+    </div>
+    <div class="professor">
+        <img src="professores/mariana.jpeg" alt="Foto do Professor" class="foto-professor" />
+        <h3>Nome: Mariana</h3>
+        <p>Função: Mestre na Arte do Inglês</p>
+        <p>Casa: Lufa-Lufa</p>
+        <img src="https://static.wikia.nocookie.net/harrypotter/images/0/06/Hufflepuff_ClearBG.png/revision/latest?cb=20200612012838&path-prefix=pt-br" width="100">
+        
+      </div>
+      <div class="professor">
+        <img src="professores/anae.jpeg" Foto do Professor class="foto-professor" />
+        <h3>Nome: Ana Érika</h3>
+        <p>Função: Mestre na Arte do Inglês</p>
+        <p>Casa: Cornival</p>
+        <img src="https://static.wikia.nocookie.net/harrypotter/images/0/07/Ravenclaw_%28S%C3%ADmbolo_Corvinal%29.png/revision/latest?cb=20170324224938&path-prefix=pt-br" width="100">
+        
+      </div>
+
+
+      <div class="professor">
+        <img src="professores/amanda.jpeg" Foto do Professor class="foto-professor" />
+        <h3>Nome: Amanda </h3>
+        <p>Função: Mestre na Arte da Tecnologia</p>
+        <p>Casa: Sonserina</p>
+        <img src="https://static.wikia.nocookie.net/harrypotter/images/0/00/Slytherin_ClearBG.png/revision/latest?cb=20200605032916&path-prefix=pt-br" width="100">
+        
+      </div>
+
+      <div class="professor">
+        <img src="professores/catanho.jpeg" Foto do Professor class="foto-professor" />
+        <h3>Nome: Anna Catanho </h3>
+        <p>Função: Mestre na Arte do Inglês</p>
+        <p>Casa: Sonserina</p>
+        <img src="https://static.wikia.nocookie.net/harrypotter/images/0/00/Slytherin_ClearBG.png/revision/latest?cb=20200605032916&path-prefix=pt-br" width="100">
+        
+    <!-- Adicione mais professores conforme necessário -->
+  </div>
+  <!-- Botão para voltar ao quiz -->
+  <button id="btn-voltar-quiz" onclick="voltarQuiz()">Voltar para o Quiz</button>
+</div>
+</div>
+    </div>
+</body>
+</html>
